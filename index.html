@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spanien & Thailand: Totalanalys</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS: CORPORATE MODERNISM --- */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1e293b;
+            font-size: 2.8rem;
+            letter-spacing: -1.5px;
+        }
+
+        .main-subtitle {
+            text-align: center;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* --- Sektionsrubriker --- */
+        .section-header {
+            text-align: center;
+            margin: 100px 0 50px 0;
+            position: relative;
+        }
+
+        .section-header::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: #cbd5e1;
+            margin: 15px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: #0f172a;
+            margin: 0;
+            letter-spacing: -0.5px;
+            font-weight: 700;
+        }
+
+        .section-desc {
+            max-width: 700px;
+            margin: 15px auto 0 auto;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* --- MACRO-NARRATIV SEKTION --- */
+        .macro-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 80px auto;
+        }
+
+        .macro-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            border-left: 6px solid #ccc;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .macro-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .macro-card.spain { border-left-color: #ef4444; }
+        .macro-card.thai { border-left-color: #3b82f6; }
+
+        .macro-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .macro-text {
+            color: #475569;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .macro-highlight {
+            font-weight: 600;
+            color: #1e293b;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* --- CHART GRID & CONTAINER --- */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .chart-container {
+            background: #ffffff;
+            padding: 25px;
+            padding-bottom: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 10;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            color: #64748b;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        /* --- POP-UP KÄLLA --- */
+        .source-popup {
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e2e8f0;
+            color: #334155;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+
+        .chart-container:hover .source-popup {
+            opacity: 1;
+            top: -15px;
+        }
+
+        /* --- TRIANGEL/DJUPANALYS SEKTION --- */
+        .triangle-section {
+            margin-top: 50px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .triangle-top-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .triangle-bottom-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .triangle-bottom-row .chart-container { width: 60%; }
+        .triangle-height { height: 350px; }
+
+        /* --- SYNTES SEKTION --- */
+        .synthesis-section {
+            margin-top: 100px;
+            background: #fff;
+            padding: 60px 40px;
+            border-radius: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .synthesis-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .synthesis-text h3 { font-size: 1.5rem; color: #1e293b; margin-bottom: 15px; }
+        .synthesis-text p { color: #64748b; line-height: 1.7; font-size: 0.95rem; margin-bottom: 20px; }
+
+        .highlight-box {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 15px;
+        }
+
+        /* --- NY: FÖRDJUPAD ANALYS & ETIK SEKTION --- */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .analysis-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            border-top: 5px solid #ccc;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: transform 0.3s ease;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .analysis-card.samband { border-top-color: #10b981; } /* Grön */
+        .analysis-card.utmaning { border-top-color: #f59e0b; } /* Orange */
+        .analysis-card.etik { border-top-color: #8b5cf6; } /* Lila */
+
+        /* Ikon-klassen är nu borttagen då du inte ville ha emojis, men behåller spacing om du vill ha text */
+        .analysis-icon { font-size: 0; margin-bottom: 0; display: none; }
+
+        .analysis-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .analysis-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 15px;
+        }
+
+        .analysis-compare {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            border-left: 3px solid #64748b;
+        }
+
+        .analysis-compare strong { display: block; margin-bottom: 4px; color: #1e293b; }
+
+        /* --- REFERENCES / KÄLLFÖRTECKNING --- */
+        .reference-section {
+            max-width: 1000px;
+            margin: 120px auto 40px auto;
+            padding: 40px;
+            background-color: #fff;
+            border-top: 4px solid #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .reference-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #1e293b;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .reference-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .reference-list li {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #475569;
+            padding-left: 20px;
+            text-indent: -20px;
+            line-height: 1.6;
+        }
+
+        .reference-list a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .reference-list a:hover { text-decoration: underline; }
+
+        @media (max-width: 1100px) {
+            .chart-grid, .analysis-grid { grid-template-columns: repeat(2, 1fr); }
+            .triangle-bottom-row .chart-container { width: 90%; }
+            .macro-container, .synthesis-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 700px) {
+            .chart-grid, .triangle-top-row, .analysis-grid { grid-template-columns: 1fr; }
+            body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Spanien & Thailand</h1>
+    <div class="main-subtitle">Total datafusion: Hälsa, Ekonomi, Sociala Faktorer & Demografi.</div>
+
+    <div class="macro-container">
+        <div class="macro-card spain">
+            <div class="macro-title">🇪🇸 Spanien: Den Europeiska Resan</div>
+            <div class="macro-text">
+                Spanien har genomgått en transformation från en stängd ekonomi under diktaturen till en <span class="macro-highlight">fullt integrerad EU-ekonomi</span>. Den stora makrotrenden är en övergång till en tjänste- och turistbaserad ekonomi som drabbades hårt av finanskrisen 2008, men som återhämtat sig genom interna reformer. Utmaningen idag är en <span class="macro-highlight">åldrande befolkning</span> och strukturell arbetslöshet.
+            </div>
+        </div>
+        <div class="macro-card thai">
+            <div class="macro-title">🇹🇭 Thailand: Det Asiatiska Undret</div>
+            <div class="macro-text">
+                Thailand kallas ofta "The Land of Smiles" men ekonomiskt är det en "Asian Tiger". Makrotrenden här är en explosiv övergång från jordbruk till <span class="macro-highlight">exportindustri och turism</span>. Landet har lyckats reducera fattigdom enormt men har fastnat i "Middle Income Trap". Den största framtida utmaningen är att landet <span class="macro-highlight">åldras snabbare än det hinner bli rikt</span>, vilket är unikt för regionen.
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>Hälsa, Ekonomi & Samhälle</h2>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">Rent Vatten (%)</div>
+            <div class="canvas-wrapper"><canvas id="chartWater"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: WHO / UNICEF</div>
+            <div class="chart-title">Vaccination Mässling (%)</div>
+            <div class="canvas-wrapper"><canvas id="chartVaccine"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: WHO</div>
+            <div class="chart-title">Sjukvård (UHC Index)</div>
+            <div class="canvas-wrapper"><canvas id="chartUHC"></canvas></div>
+        </div>
+
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">BNP per Capita (PPP)</div>
+            <div class="canvas-wrapper"><canvas id="chartGDP"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">Gini (Inkomstojämlikhet)</div>
+            <div class="canvas-wrapper"><canvas id="chartGini"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: ILO</div>
+            <div class="chart-title">Arbetslöshet (%)</div>
+            <div class="canvas-wrapper"><canvas id="chartUnemployment"></canvas></div>
+        </div>
+
+        <div class="chart-container">
+            <div class="source-popup">Källa: UNDP</div>
+            <div class="chart-title">GII (Jämställdhet)</div>
+            <div class="canvas-wrapper"><canvas id="chartGII"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: EIU</div>
+            <div class="chart-title">Democracy Index</div>
+            <div class="canvas-wrapper"><canvas id="chartDemocracy"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: Transparency Int.</div>
+            <div class="chart-title">Korruption (CPI)</div>
+            <div class="canvas-wrapper"><canvas id="chartCorruption"></canvas></div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>Demografisk Utveckling</h2>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">Förväntad Livslängd (År)</div>
+            <div class="canvas-wrapper"><canvas id="chartLifeExp"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: UN Population</div>
+            <div class="chart-title">Urbanisering (% i stad)</div>
+            <div class="canvas-wrapper"><canvas id="chartUrban"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">Befolkningstillväxt (%)</div>
+            <div class="canvas-wrapper"><canvas id="chartPopGrowth"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: UN Population</div>
+            <div class="chart-title">Nativitet (Födda per 1000)</div>
+            <div class="canvas-wrapper"><canvas id="chartBirth"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: UN Population</div>
+            <div class="chart-title">Mortalitet (Döda per 1000)</div>
+            <div class="canvas-wrapper"><canvas id="chartDeath"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">Netto Migration</div>
+            <div class="canvas-wrapper"><canvas id="chartMigration"></canvas></div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>Djupanalys: Historisk Kontext</h2>
+    </div>
+
+    <div class="triangle-section">
+        <p style="text-align: center; color: #64748b; margin-bottom: 40px; font-size: 0.9rem;">Håll muspekaren över graferna nedan för historiska orsaker.</p>
+
+        <div class="triangle-top-row">
+            <div class="chart-container">
+                <div class="source-popup">Källa: Världsbanken</div>
+                <div class="chart-title">GNI per Capita (PPP)</div>
+                <div class="canvas-wrapper triangle-height"><canvas id="triGNI"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <div class="source-popup">Källa: UNDP</div>
+                <div class="chart-title">Human Development Index (HDI)</div>
+                <div class="canvas-wrapper triangle-height"><canvas id="triHDI"></canvas></div>
+            </div>
+        </div>
+
+        <div class="triangle-bottom-row">
+            <div class="chart-container">
+                <div class="source-popup">Källa: FAO</div>
+                <div class="chart-title">Undernärd Befolkning (%)</div>
+                <div class="canvas-wrapper triangle-height"><canvas id="triNutrition"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>Regionalt Perspektiv</h2>
+        <div class="section-desc">Här jämför vi länderna med deras respektive regioner: Spanien vs EU och Thailand vs Sydostasien (SEA).</div>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-container">
+            <div class="source-popup">Källa: Världsbanken</div>
+            <div class="chart-title">Jämförelse: GNI PPP ($)</div>
+            <div class="canvas-wrapper"><canvas id="regGNI"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: UNDP</div>
+            <div class="chart-title">Jämförelse: HDI</div>
+            <div class="canvas-wrapper"><canvas id="regHDI"></canvas></div>
+        </div>
+        <div class="chart-container">
+            <div class="source-popup">Källa: FAO</div>
+            <div class="chart-title">Jämförelse: Undernäring (%)</div>
+            <div class="canvas-wrapper"><canvas id="regNutri"></canvas></div>
+        </div>
+    </div>
+
+    <div class="synthesis-section">
+        <div class="synthesis-layout">
+            <div class="chart-container" style="border:none; box-shadow:none; padding:0;">
+                <div class="source-popup">Källa: Världsbanken</div>
+                <div class="chart-title" style="font-size:1.2rem; border-bottom:none; margin-bottom:5px;">Syntes: Äldre Befolkning (65+)</div>
+                <p style="text-align:center; font-size:0.85rem; color:#888; margin-bottom:20px;">
+                    Visar övergången mot en åldrande befolkning. Håll över punkterna för orsaker & konsekvenser.
+                </p>
+                <div class="canvas-wrapper" style="height: 350px;">
+                    <canvas id="chartAging"></canvas>
+                </div>
+            </div>
+
+            <div class="synthesis-text">
+                <h3>Demografisk Syntes</h3>
+                <p>
+                    Datat visar tydligt hur ekonomisk mognad och demografi hänger ihop. Spanien hanterar nu konsekvenserna av ett mycket långt liv men få födslar, medan Thailand försöker hantera samma problem men vid en lägre inkomstnivå.
+                </p>
+                <div class="highlight-box">
+                    <strong>🇪🇸 Spanien:</strong> En "inverterad pyramid". Hög livslängd och lågt barnafödande skapar press på välfärden, vilket delvis balanseras av migration.
+                </div>
+                <div class="highlight-box" style="border-left-color: #3b82f6;">
+                    <strong>🇹🇭 Thailand:</strong> Unik i regionen. Har åldrats extremt snabbt p.g.a. framgångsrik familjeplanering. Riskerar att "bli gammal innan man blir rik".
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>Fördjupad Analys & Etiska Perspektiv</h2>
+        <div class="section-desc">En jämförelse av ländernas utmaningar, begreppsanalys och etiska frågeställningar.</div>
+    </div>
+
+    <div class="analysis-grid">
+        <div class="analysis-card samband">
+            <h3>Begrepp & Samband</h3>
+            <p>
+                Datat visar ett tydligt samband mellan <strong>Urbanisering</strong> och <strong>Nativitet</strong>. När Thailand gick från jordbruk till industri (Urbanisering ökade från 28% till 53%, Källa: Världsbanken/UN Population Division), sjönk barnafödandet kraftigt.
+            </p>
+            <p>
+                Detta förklaras av <strong>Demografiska Transitionen</strong>. Spanien befinner sig i fas 4/5 (låg födelse/dödlighet), medan Thailand extremt snabbt rört sig mot samma fas, vilket skapar en demografisk chock för ekonomin.
+            </p>
+            <div class="analysis-compare">
+                <strong>Nyckelinsikt:</strong>
+                Ekonomisk utveckling (BNP) korrelerar negativt med fertilitet i båda fallen.
+            </div>
+        </div>
+
+        <div class="analysis-card utmaning">
+            <h3>Jämförelse av Utmaningar</h3>
+            <p>
+                <strong>Spanien ("Rik men gammal"):</strong> Huvudutmaningen är <em>Försörjningsbördan</em>. Pensionssystemet kräver fler arbetare än vad som föds. Lösningen har varit migration, men detta skapar politiska spänningar och bostadsbrist.
+            </p>
+            <p>
+                <strong>Thailand ("Gammal före rik"):</strong> Thailand har fastnat i <em>Middle Income Trap</em>. Arbetskraften krymper innan landet byggt upp samma välfärdsresurser som Spanien. Bristen på ett heltäckande statligt pensionssystem gör att äldre riskerar fattigdom.
+            </p>
+        </div>
+
+        <div class="analysis-card etik">
+            <h3>Etiska Frågor</h3>
+            <p>
+                <strong>Migrationsetik:</strong> Är det etiskt av rika länder (Spanien) att dränera fattigare länder på vårdpersonal ("Brain Drain") för att ta hand om sina egna äldre?
+            </p>
+            <p>
+                <strong>Generationskontraktet:</strong> I Thailand vilar äldrevården traditionellt på familjen. Är det rättvist att den unga generationen ska bära denna börda när de måste flytta till städerna för att arbeta? Vem tar hand om de äldre när staten inte har råd och barnen inte har tid?
+            </p>
+        </div>
+    </div>
+
+    <div class="reference-section">
+        <h2>Källförteckning & Referenser</h2>
+        <p style="margin-bottom:20px; color:#666; font-size:0.9rem;">Följande källor har använts för sammanställning av data i graferna ovan.</p>
+
+        <ul class="reference-list">
+            <li>
+                Economist Intelligence Unit (EIU). (2024). <em>Democracy Index</em>. [Online]. Tillgänglig: <a href="https://www.eiu.com/n/campaigns/democracy-index-2023/" target="_blank">https://www.eiu.com/n/campaigns/democracy-index-2023/</a>
+            </li>
+            <li>
+                Food and Agriculture Organization of the United Nations (FAO). (2024). <em>FAOSTAT: Suite of Food Security Indicators</em>. [Online]. Tillgänglig: <a href="https://www.fao.org/faostat/en/#data/FS" target="_blank">https://www.fao.org/faostat/en/#data/FS</a>
+            </li>
+            <li>
+                International Labour Organization (ILO). (2024). <em>ILOSTAT: Unemployment rate</em>. [Online]. Tillgänglig: <a href="https://ilostat.ilo.org/" target="_blank">https://ilostat.ilo.org/</a>
+            </li>
+            <li>
+                Transparency International. (2024). <em>Corruption Perceptions Index (CPI)</em>. [Online]. Tillgänglig: <a href="https://www.transparency.org/en/cpi/" target="_blank">https://www.transparency.org/en/cpi/</a>
+            </li>
+            <li>
+                United Nations Development Programme (UNDP). (2024). <em>Human Development Reports (HDI & GII)</em>. [Online]. Tillgänglig: <a href="https://hdr.undp.org/data-center" target="_blank">https://hdr.undp.org/data-center</a>
+            </li>
+            <li>
+                United Nations Population Division. (2024). <em>World Population Prospects 2024</em>. [Online]. Tillgänglig: <a href="https://population.un.org/wpp/" target="_blank">https://population.un.org/wpp/</a>
+            </li>
+            <li>
+                Världsbanken. (2024). <em>World Bank Open Data (Indicators: GDP, Gini, Life Expectancy, Migration)</em>. [Online]. Tillgänglig: <a href="https://data.worldbank.org/" target="_blank">https://data.worldbank.org/</a>
+            </li>
+            <li>
+                World Health Organization (WHO). (2024). <em>Global Health Observatory (GHO) data repository</em>. [Online]. Tillgänglig: <a href="https://www.who.int/data/gho" target="_blank">https://www.who.int/data/gho</a>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        // --- KONFIGURATION & DATA ---
+
+        const years = [1985, 1995, 2005, 2015, 2022];
+        const colorSpain = '#ef4444'; // Röd
+        const colorThai = '#3b82f6';  // Blå
+        const colorEU = '#7f1d1d';    // Mörk Röd
+        const colorSEA = '#1e3a8a';   // Mörk Blå
+
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        // Standardinställningar
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    align: 'center',
+                    labels: { usePointStyle: true, font: { size: 12, weight: 600 }, padding: 20 }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    padding: 12,
+                    titleFont: { size: 13, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    cornerRadius: 8,
+                }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: { grid: { color: '#f1f5f9' }, border: { display: false } }
+            },
+            elements: {
+                line: { tension: 0.4, borderWidth: 3 },
+                point: { radius: 3, hoverRadius: 6, borderWidth: 2 }
+            }
+        };
+
+        // Funktion för vanliga grafer
+        function createChart(id, label, dataS, dataT) {
+            const ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        { label: 'Spanien', data: dataS, borderColor: colorSpain, backgroundColor: colorSpain, fill: false },
+                        { label: 'Thailand', data: dataT, borderColor: colorThai, backgroundColor: colorThai, fill: false }
+                    ]
+                },
+                options: commonOptions
+            });
+        }
+
+        // --- SKAPA GRAFERNA ---
+        createChart('chartWater', 'Vatten', [98, 99, 100, 100, 100], [70, 86, 96, 99, 99.8]);
+        createChart('chartVaccine', 'Vaccin', [82, 90, 97, 96, 95], [52, 88, 96, 99, 86]);
+        createChart('chartUHC', 'UHC Index', [null, null, 75, 81, 84], [null, null, 58, 76, 82]);
+        createChart('chartGDP', 'BNP', [9800, 17500, 29000, 34900, 50400], [2100, 6500, 10300, 15800, 22400]);
+        createChart('chartGini', 'Gini', [32.5, 34.3, 32.4, 34.6, 32.0], [43.1, 42.6, 39.3, 36.0, 34.9]);
+        createChart('chartUnemployment', 'Arbetslöshet', [21.6, 22.7, 9.1, 22.0, 12.1], [2.5, 1.7, 1.3, 0.9, 1.1]);
+        createChart('chartGII', 'GII', [null, 0.150, 0.103, 0.071, 0.048], [null, 0.440, 0.392, 0.380, 0.337]);
+        createChart('chartDemocracy', 'Democracy', [null, null, 8.3, 8.3, 8.07], [null, null, 5.6, 5.09, 6.35]);
+        createChart('chartCorruption', 'CPI', [null, 43, 68, 58, 60], [null, 30, 38, 38, 35]);
+
+        createChart('chartLifeExp', 'Livslängd', [76.5, 78.2, 80.3, 82.8, 83.3], [68.1, 70.2, 72.3, 75.8, 79.7]);
+        createChart('chartUrban', 'Urbanisering', [75, 76, 77, 79, 81], [28, 30, 38, 48, 53]);
+        createChart('chartPopGrowth', 'Tillväxt', [0.4, 0.3, 1.6, -0.1, 0.3], [1.9, 1.1, 0.7, 0.4, 0.1]);
+        createChart('chartBirth', 'Nativitet', [12.5, 9.2, 10.6, 9.0, 7.1], [24.0, 16.5, 12.0, 10.5, 9.0]);
+        createChart('chartDeath', 'Mortalitet', [8.0, 8.8, 8.9, 9.1, 9.8], [6.5, 6.0, 6.5, 7.2, 7.8]);
+        createChart('chartMigration', 'Migration', [-20000, 150000, 600000, -50000, 200000], [-50000, 10000, 50000, 20000, -10000]);
+
+        // --- TRIANGEL GRAFER (CONTEXT) ---
+        const contextData = {
+            gni: {
+                spain: ["Inträde i EG (nuvarande EU) öppnar marknader.", "Infrastrukturboom och modernisering.", "Byggboom driven av låga räntor och turism.", "Ekonomin återhämtar sig långsamt efter finanskrisen.", "Stark tjänstesektor och återkomst av turism."],
+                thai: ["Skifte från jordbruk till lätt industri.", "Snabb exportdriven tillväxt ('Asian Tiger').", "Återhämtning efter Asienkrisen 1997.", "Politisk instabilitet dämpar tillväxt.", "Fokus på högteknologi och turism post-covid."]
+            },
+            hdi: {
+                spain: ["Demokratisering stärker välfärdssystemet.", "Massiv utbyggnad av utbildning och hälsa.", "En av världens högsta förväntade livslängder.", "Hög utbildningsnivå men ekonomisk kris sänker snittet.", "Fortsatt mycket hög mänsklig utveckling."],
+                thai: ["Fokus på grundläggande sanitet och hälsa.", "Växande medelklass och bättre skolgång.", "Införande av allmän sjukvård (30-baht scheme).", "Fortsatta förbättringar men regionala klyftor.", "Åldrande befolkning börjar belasta systemet."]
+            },
+            nutrition: {
+                spain: ["Livsmedelsförsörjning är helt säkrad.", "Ingen undernäring, fokus på matkvalitet.", "Ökande problem med övervikt snarare än hunger.", "Sociala skyddsnät fångar upp utsatta.", "Extremt låga nivåer (<2.5%)."],
+                thai: ["Utbredd fattigdom på landsbygden.", "Ekonomisk tillväxt lyfter miljoner ur hunger.", "Thailand blir stor livsmedelsexportör.", "Modernt jordbruk eliminerar de flesta brister.", "Kvarvarande problem i isolerade bergsområden."]
+            }
+        };
+
+        function createTriangleChart(id, dataS, dataT, key) {
+            const ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        { label: 'Spanien', data: dataS, borderColor: colorSpain, backgroundColor: colorSpain, pointRadius: 6, pointHoverRadius: 9, contextInfo: contextData[key].spain },
+                        { label: 'Thailand', data: dataT, borderColor: colorThai, backgroundColor: colorThai, pointRadius: 6, pointHoverRadius: 9, contextInfo: contextData[key].thai }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 14, weight: 'bold' } } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.98)',
+                            padding: 16,
+                            titleFont: { size: 16, weight: 800 },
+                            bodyFont: { size: 14, lineHeight: 1.6 },
+                            displayColors: true,
+                            boxPadding: 8,
+                            callbacks: {
+                                afterBody: function(context) {
+                                    let fullText = "\n--------------------------\n";
+                                    context.forEach((item) => {
+                                        const countryName = item.dataset.label;
+                                        const text = item.dataset.contextInfo[item.dataIndex];
+                                        const flag = countryName === 'Spanien' ? '🇪🇸' : '🇹🇭';
+                                        fullText += `${flag} ${countryName.toUpperCase()}:\n${text}\n\n`;
+                                    });
+                                    return fullText;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        createTriangleChart('triGNI', [9600, 17200, 29100, 35200, 49600], [2050, 6400, 10200, 15500, 22100], 'gni');
+        createTriangleChart('triHDI', [0.77, 0.83, 0.86, 0.89, 0.91], [0.57, 0.64, 0.70, 0.76, 0.80], 'hdi');
+        createTriangleChart('triNutrition', [2.5, 2.5, 2.5, 2.5, 2.5], [35, 23, 12, 6.5, 5.8], 'nutrition');
+
+        // --- REGIONALA GRAFER ---
+        function createRegionalChart(id, dataS, dataEU, dataT, dataSEA) {
+            const ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        { label: 'Spanien', data: dataS, borderColor: colorSpain, backgroundColor: colorSpain, tension: 0.4 },
+                        { label: 'EU Snitt', data: dataEU, borderColor: colorEU, backgroundColor: colorEU, borderDash: [5, 5], pointStyle: 'rectRot', tension: 0.4 },
+                        { label: 'Thailand', data: dataT, borderColor: colorThai, backgroundColor: colorThai, tension: 0.4 },
+                        { label: 'Sydostasien Snitt', data: dataSEA, borderColor: colorSEA, backgroundColor: colorSEA, borderDash: [5, 5], pointStyle: 'rectRot', tension: 0.4 }
+                    ]
+                },
+                options: commonOptions
+            });
+        }
+
+        // Estimerade regionala data
+        createRegionalChart('regGNI',
+            [9800, 17500, 29000, 34900, 50400],
+            [10500, 19000, 31000, 38000, 53000],
+            [2100, 6500, 10300, 15800, 22400],
+            [1500, 4000, 7500, 12000, 17000]
+        );
+
+        createRegionalChart('regHDI',
+            [0.77, 0.83, 0.86, 0.89, 0.91],
+            [0.76, 0.82, 0.87, 0.90, 0.92],
+            [0.57, 0.64, 0.70, 0.76, 0.80],
+            [0.52, 0.59, 0.65, 0.71, 0.74]
+        );
+
+        createRegionalChart('regNutri',
+            [2.5, 2.5, 2.5, 2.5, 2.5],
+            [2.5, 2.5, 2.5, 2.5, 2.5],
+            [35, 23, 12, 6.5, 5.8],
+            [38, 28, 18, 10, 8.5]
+        );
+
+
+        // --- SYNTES GRAF (AGING) ---
+        const synthesisData = {
+            spain: [
+                "ORSAK: Ung befolkning efter demokratisering.\nKONSEKVENS: Utbyggnad av skolor och vård behövs.",
+                "ORSAK: Lågkonjunktur dämpar barnafödandet.\nKONSEKVENS: Arbetskraften börjar stagnera.",
+                "ORSAK: Immigration döljer lågt födelsetal.\nKONSEKVENS: Ekonomisk tillväxt men bostadsbrist.",
+                "ORSAK: Långvarigt låg fertilitet märks nu.\nKONSEKVENS: Pensionssystemet under press.",
+                "ORSAK: Extremt hög livslängd + få barn.\nKONSEKVENS: 'Silverekonomi' & vårdbrist."
+            ],
+            thai: [
+                "ORSAK: Jordbrukssamhälle med stora familjer.\nKONSEKVENS: Hög försörjningsbörda (många barn).",
+                "ORSAK: 'Condom King' & familjeplanering.\nKONSEKVENS: Färre barn frigör resurser (demografisk utdelning).",
+                "ORSAK: Industrialisering & urbanisering.\nKONSEKVENS: Traditionella nätverk för äldreomsorg bryts.",
+                "ORSAK: Befolkningstillväxten nära noll.\nKONSEKVENS: Brist på arbetskraft, behov av gästarbetare.",
+                "ORSAK: Snabbt åldrande innan full rikedom.\nKONSEKVENS: Risk för att 'bli gammal innan man blir rik'."
+            ]
+        };
+
+        const ctxAging = document.getElementById('chartAging').getContext('2d');
+        new Chart(ctxAging, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Spanien',
+                        data: [12.0, 15.1, 16.5, 18.5, 20.3],
+                        borderColor: colorSpain, backgroundColor: colorSpain,
+                        pointRadius: 6, pointHoverRadius: 10,
+                        contextInfo: synthesisData.spain
+                    },
+                    {
+                        label: 'Thailand',
+                        data: [3.8, 5.2, 7.5, 10.7, 14.5],
+                        borderColor: colorThai, backgroundColor: colorThai,
+                        pointRadius: 6, pointHoverRadius: 10,
+                        contextInfo: synthesisData.thai
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 14, weight: 'bold' } } },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.98)',
+                        padding: 18,
+                        titleFont: { size: 16, weight: 800 },
+                        bodyFont: { size: 14, lineHeight: 1.5 },
+                        displayColors: true,
+                        boxPadding: 8,
+                        callbacks: {
+                            afterBody: function(context) {
+                                let fullText = "\n--------------------------\n";
+                                context.forEach((item) => {
+                                    const countryName = item.dataset.label;
+                                    const text = item.dataset.contextInfo[item.dataIndex];
+                                    const flag = countryName === 'Spanien' ? '🇪🇸' : '🇹🇭';
+                                    fullText += `${flag} ${countryName.toUpperCase()}:\n${text}\n\n`;
+                                });
+                                return fullText;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
